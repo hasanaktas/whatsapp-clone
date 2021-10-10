@@ -6,9 +6,12 @@ import {
   collection,
   query,
   addDoc,
+  setDoc,
   onSnapshot,
+  getDoc,
   serverTimestamp,
   orderBy,
+  doc,
 } from "firebase/firestore";
 import { db } from "../../../../utils/firebase";
 const Chat = (props) => {
@@ -28,6 +31,7 @@ const Chat = (props) => {
   }, [users, userId]);
 
   useEffect(() => {
+    createDoc(chatId);
     const q = query(
       collection(db, `chats/${chatId}/messages`),
       orderBy("time", "asc")
@@ -43,6 +47,17 @@ const Chat = (props) => {
     return () => unsubscribe();
   }, [chatId]);
 
+  const createDoc = async (chatId) => {
+    const docRef = doc(db, "chats", chatId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+    } else {
+      await setDoc(doc(db, `chats`, chatId), {
+        users: [account.uid, userId],
+      });
+    }
+  };
   const sendMessage = async (message, setMessage) => {
     await addDoc(collection(db, `chats/${chatId}/messages`), {
       content: message,
