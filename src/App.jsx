@@ -2,7 +2,8 @@ import { CssBaseline } from "@mui/material";
 import { useRoutes } from "react-router-dom";
 import { routes } from "./pages";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./utils/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "./utils/firebase";
 import { useEffect, useState } from "react";
 import SplashPage from "./pages/splash";
 const App = () => {
@@ -11,8 +12,9 @@ const App = () => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setAccount(user);
-        setInitializing(false);
+        checkAndCreateUser(user);
+        // setAccount(user);
+        // setInitializing(false);
         console.log("user var");
       } else {
         setAccount(null);
@@ -21,6 +23,24 @@ const App = () => {
       }
     });
   }, []);
+
+  const checkAndCreateUser = async (user) => {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      setAccount(user);
+      setInitializing(false);
+    } else {
+      await setDoc(doc(db, "users", user.uid), {
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+      });
+      setAccount(user);
+      setInitializing(false);
+    }
+  };
 
   const content = useRoutes(routes(account));
   return (
