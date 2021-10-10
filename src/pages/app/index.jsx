@@ -28,7 +28,7 @@ const AppPage = (props) => {
   };
   return (
     <Box sx={{ flexGrow: 1, display: "flex" }}>
-      <UserList users={users} account={account} />
+      <UserList users={users} account={account} userId={userId} />
       {userId && users.length > 0 && (
         <Chat account={account} userId={userId} users={users} />
       )}

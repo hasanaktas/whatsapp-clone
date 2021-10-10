@@ -13,13 +13,9 @@ const App = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         checkAndCreateUser(user);
-        // setAccount(user);
-        // setInitializing(false);
-        console.log("user var");
       } else {
         setAccount(null);
         setInitializing(false);
-        console.log("user yok");
       }
     });
   }, []);

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 const UserList = (props) => {
-  const { users, account } = props;
+  const { users, account, userId } = props;
   const navigate = useNavigate();
 
   const filteredUser = useMemo(() => {
@@ -29,9 +29,12 @@ const UserList = (props) => {
       {filteredUser.map((user) => {
         return (
           <ListItem key={user.id}>
-            <ListItemButton onClick={() => navigate(`/app/${user.id}`)}>
+            <ListItemButton
+              onClick={() => navigate(`/app/${user.id}`)}
+              selected={user.id === userId}
+            >
               <ListItemAvatar>
-                <Avatar alt={user.displayName} src={user.photoUrl} />
+                <Avatar alt={user.displayName} src={user.photoURL} />
               </ListItemAvatar>
               <ListItemText primary={user.displayName} secondary={user.email} />
             </ListItemButton>
