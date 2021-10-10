@@ -1,45 +1,34 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { CssBaseline } from "@mui/material";
+import { useRoutes } from "react-router-dom";
+import { routes } from "./pages";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./utils/firebase";
+import { useEffect, useState } from "react";
+import SplashPage from "./pages/splash";
+const App = () => {
+  const [initializing, setInitializing] = useState(true);
+  const [account, setAccount] = useState(null);
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAccount(user);
+        setInitializing(false);
+        console.log("user var");
+      } else {
+        setAccount(null);
+        setInitializing(false);
+        console.log("user yok");
+      }
+    });
+  }, []);
 
-function App() {
-  const [count, setCount] = useState(0)
-
+  const content = useRoutes(routes(account));
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
-}
+    <>
+      <CssBaseline />
+      {initializing ? <SplashPage /> : content}
+    </>
+  );
+};
 
-export default App
+export default App;
